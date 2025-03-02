@@ -752,24 +752,20 @@ class Birds extends VantaBase {
         const gradient = options.colorMode.indexOf('Gradient') != -1
 
         const newBirdGeo = getNewBirdGeometryBasic(options)
-        const numV = newBirdGeo.attributes.position.length
+        const numV = newBirdGeo.attributes.position.count * 3
         const birdColors = new THREE.BufferAttribute(new Float32Array(numV), 3)
         if (gradient) {
-          for (var j=0; j<newBirdGeo.index.array.length; j+=3) {
+          for (var j=0; j<newBirdGeo.index.count; j+=3) {
             for (var k=0; k<=2; k++) {
               const index = newBirdGeo.index.array[j+k]
               const newColor = this.getNewCol()
-              birdColors.array[index*3] = newColor.r
-              birdColors.array[index*3+1] = newColor.g
-              birdColors.array[index*3+2] = newColor.b
+              birdColors.setXYZ(index, newColor.r, newColor.g, newColor.b);
             }
           }
         } else {
           const newColor = this.getNewCol(i/numBirds)
-          for (var j=0; j<birdColors.array.length; j+=3) {
-            birdColors.array[j] = newColor.r
-            birdColors.array[j+1] = newColor.g
-            birdColors.array[j+2] = newColor.b
+          for (var j=0; j<birdColors.count; j+=3) {
+            birdColors.setXYZ(j, newColor.r, newColor.g, newColor.b);
           }
         }
         newBirdGeo.setAttribute('color', birdColors)
@@ -780,7 +776,7 @@ class Birds extends VantaBase {
             color: 0xffffff,
             side: THREE.DoubleSide,
             // colors: THREE.VertexColors,
-					  vertexColors: THREE.VertexColors,
+			vertexColors: true,
           }))
         bird.phase = Math.floor( Math.random() * 62.83 )
         bird.position.x = boids[i].position.x
